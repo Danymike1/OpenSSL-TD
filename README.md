@@ -51,5 +51,37 @@ openssl dgst -sha256 -verify server_des3.pub -signature monfichier.sign monfichi
 openssl dgst -sha256 -verify server.pub -signature monfichier.sign monfichier.txt
 
 **Exercice 4 – JWT**
-On va générer deux jetons ayant le même payload:
+1. On va générer deux jetons ayant le même payload:
+
+2. Encodage Base64URL de l’en-tête et du payload:
+
+header=$(echo -n '{"alg":"HS256","typ":"JWT"}' | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+payload=$(echo -n '{"sub":"1234567890","name":"Tyrion Lannister","iat":1704388115}' | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+3. Signature:
+
+secret="Ma clé secrète"
+
+signature=$(printf "%s.%s" "$header" "$payload" | openssl dgst -sha256 -hmac "$secret" -binary | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+4. Jeton complet:
+
+echo "$header.$payload.$signature"
+
+
+**2. JWT RSA + SHA256**
+
+1. Encodage Base64URL (mêmes commandes pour header/payload, en remplaçant algorie par RS256):
+
+header=$(echo -n '{"alg":"RS256","typ":"JWT"}' | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+2. Signature avec la clé privée:
+
+payload=$(echo -n '{"sub":"1234567890","name":"Tyrion Lannister","iat":1704388115}' | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+signature=$(printf "%s.%s" "$header" "$payload" | openssl dgst -sha256 -sign server.key | openssl enc -base64 -e -A | tr '+/' '-_' | tr -d '=')
+
+3. Jeton complet :
+   echo "$header.$payload.$signature"
 
