@@ -69,7 +69,6 @@ signature=$(printf "%s.%s" "$header" "$payload" | openssl dgst -sha256 -hmac "$s
 
 echo "$header.$payload.$signature"
 
-
 **2. JWT RSA + SHA256**
 
 1. Encodage Base64URL (mêmes commandes pour header/payload, en remplaçant algorie par RS256):
